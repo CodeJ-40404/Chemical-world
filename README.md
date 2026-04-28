@@ -19,13 +19,17 @@ Combine elements. Earn coins. Buy machines. Build rockets. Leave the planet.
 ## 🚀 Current Status / 当前进度
 
 - 📝 Design draft in progress / 设计草案整理中
-- 🧱 Core system: C++ 20
-- 👥 Looking for contributors / 寻找志同道合的伙伴
+- 💻 Programming 编写中
+- ✅ current news: Added Tutorial, but not available now, sorry  当前进度:加入了教程，但现在还是不能玩的
+- 🧱 Core system: C++ 20, nlohmann-json (thx for your help,nlohmann-json)
+- 👥 Looking for contributors / 寻找志同道合的伙伴,your fork is super meaningful!
 
 ## 🌟 Support Us / 支持我们
 
 ⭐ Star this repo – it means a lot to a 13-year-old dev and his friends.  
 点个 Star，对一位13岁的开发者和他的朋友们意义重大。
+
+Notice:there's only chinese version, ENGLISH VERSION IS STILL ON TODO LISTS
 
 cheers! 🍻
 
