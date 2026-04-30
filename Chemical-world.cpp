@@ -52,6 +52,131 @@ using namespace std;
 #define YELLOW 14
 #define LIGHT_WHITE 15
 
+string gettimeString(time_t t) {
+    char buffer[80];
+    struct tm* timeinfo = localtime(&t);
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    return string(buffer);
+}
+
+// 控制台特效类
+class ConsoleEffect {
+public:
+    static void setColor(int textColor, int bgColor = 0) {
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), textColor + bgColor * 16);
+    }
+
+    static void gotoxy(int x, int y) {
+        COORD coord;
+        coord.X = x;
+        coord.Y = y;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    }
+
+    static void hideCursor() {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+        cursorInfo.bVisible = false;
+        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+    }
+
+    static void showCursor() {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+        cursorInfo.bVisible = true;
+        SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+    }
+
+    static void clearScreen() {
+        system("cls");
+    }
+};
+
+
+// 炫酷动画类
+class CoolAnimation {
+public:
+    // 矩阵数字雨
+    static void matrixRain(int duration = 3) {
+        ConsoleEffect::hideCursor();
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        int width = csbi.dwSize.X;
+        int height = csbi.dwSize.Y;
+
+        vector<int> columns(width, 0);
+
+        for (int t = 0; t < duration * 15; t++) {
+            ConsoleEffect::clearScreen();
+            for (int i = 0; i < width; i++) {
+                if (rand() % 8 == 0) {
+                    columns[i] = rand() % height;
+                }
+                if (columns[i] > 0) {
+                    for (int j = 0; j < 3 && columns[i] - j >= 0; j++) {
+                        ConsoleEffect::gotoxy(i, columns[i] - j);
+                        if (j == 0) ConsoleEffect::setColor(10); // 亮绿
+                        else ConsoleEffect::setColor(2); // 暗绿
+                        cout << char(rand() % 2 + '0');
+                    }
+                    columns[i]--;
+                }
+            }
+            Sleep(80);
+        }
+        ConsoleEffect::clearScreen();
+    }
+
+    // 彩虹文字
+    static void rainbowText(const string& text, int delay = 30) {
+        int colors[] = { 12, 10, 14, 11, 13, 9 };
+        for (size_t i = 0; i < text.length(); i++) {
+            ConsoleEffect::setColor(colors[i % 6]);
+            cout << text[i];
+            Sleep(delay);
+        }
+        ConsoleEffect::setColor(7);
+    }
+
+    // 烟花特效
+    static void firework() {
+        Sleep(1500);
+        ConsoleEffect::clearScreen();
+        for (int i = 0; i < 80; i++) {
+            int x = rand() % 80;
+            int y = rand() % 20;
+            ConsoleEffect::gotoxy(x, y);
+            ConsoleEffect::setColor(rand() % 15 + 1);
+            cout << "*";
+            Sleep(25);
+        }
+        Sleep(1500);
+		system("cls");
+    }
+
+};
+
+
+
+
+//按钮生成系统
+//这里会去写生成按钮的全家桶，代码量和技术难度恐怕会炸
+//悲
+//有没有朋友帮帮忙
+//求求了
+struct Button{
+    //预留
+};
+
+class ButtonG {
+public:
+    //生成按钮
+    void generateButton() {
+        //预留
+    }
+};
+
+
 // ======================== 编码转换助手 ========================
 
 class EncodingHelper {
@@ -192,6 +317,7 @@ inline void typewriter(const string& text, int ms = 30) {
 }
 
 //开场动画，帅到爆炸
+//这里的代码写得有点乱，主要是为了展示一些炫酷的动画效果，后续版本可能会重构一下
 void cppwelcome() {
 	setcolor(DARK_GREEN);
 	typewriter("#include<bits/stdc++.h>\n", 40);
@@ -215,8 +341,11 @@ void cppwelcome() {
 	setcolor(RESET);
 }
 
+//帅炸了，4个连续的LOGO，直接炸屏，后续版本可能会增加一些动画效果，比如闪烁、渐变等等，反正就是要炫酷
+//TODO:增加一些动画效果，比如闪烁、渐变等等，反正就是要炫酷
 void showlogo() {
 	setcolor(CYAN);
+    //ascii文字LOGO,还不错
 	cout << R"( ╔════════════════════════════════════════════════════════════════════════════╗
  ║                                                                            ║
  ║     ██████╗██╗  ██╗███████╗███╗   ███╗██╗ ██████╗ █████╗ ██╗               ║
@@ -239,9 +368,11 @@ void showlogo() {
  ║                                                                            ║
  ╚════════════════════════════════════════════════════════════════════════════╝)";
 	delay(5000);
-
+    
 	cls();
 	setcolor(RED);
+    //有种虫洞的感觉，太帅了，就和本人和看到这个注释的你一样帅炸了（如果你是女的，那就是太漂亮了）
+    //谄媚这一块
 	cout << R"(╔════════════════════════════════════════════════════════════════════════════╗
 ║                                                                            ║
 ║                                    .&@&&&&@,.                              ║
@@ -275,6 +406,7 @@ void showlogo() {
 
 	cls();
 	setcolor(GREEN);
+	//还有jobs的名言，太经典了，必须要放在这里
 	cout << R"(╔════════════════════════════════════════════════════════════════════════════╗
 ║                                                                            ║
 ║                                    ╔╗                                      ║
@@ -295,7 +427,7 @@ void showlogo() {
 ║   │                                                                     │  ║
 ║   └─────────────────────────────────────────────────────────────────────┘  ║
 ║                                                                            ║
-║                         v1.0  |  BUILDING THE FUTURE                       ║
+║                         v0.4  |  BUILDING THE FUTURE                       ║
 ║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝)";
 
@@ -303,6 +435,7 @@ void showlogo() {
 
 	cls();
 	setcolor(YELLOW);
+	//最后一个LOGO，感觉有点像元素周期表，这个算不了什么，但也很帅
 	cout << R"(╔════════════════════════════════════════════════════════════════════════════╗
 ║                                                                            ║
 ║                               .....                                        ║
@@ -313,8 +446,8 @@ void showlogo() {
 ║                      .+++******   ******++++.                              ║
 ║     ██████╗██╗  ██╗   .+++****       ****+++..    ██╗    ██╗ ██████╗       ║
 ║    ██╔════╝██║  ██║    .++**+         +**+++.     ██║    ██║██╔══██╗       ║
-║    ██║     ███████║      .+++           +++..      ██║ █╗ ██║██████╔╝      ║
-║    ██║     ██╔══██║        .+           +.         ██║███╗██║██╔══██╗      ║
+║    ██║     ███████║      .+++           +++..      ██║ █╗ ██║██║   ██║      ║
+║    ██║     ██╔══██║        .+           +.         ██║███╗██║██║   ██║      ║ ║
 ║    ╚██████╗██║  ██║          .         .           ╚███╔███╔╝██║  ██║      ║
 ║     ╚═════╝╚═╝  ╚═╝                                   ╚══╝╚══╝ ╚═╝  ╚═╝    ║
 ║                                                                            ║
@@ -335,7 +468,9 @@ void showlogo() {
 	cls();
 	setcolor(RESET);
 }
-
+//异常处理，防止游戏崩溃，增加稳定性，后续版本可能会增加一些日志记录功能，记录玩家的操作和游戏的状态，方便调试和优化
+//不写注释我自己都快看不懂了
+//TODO:增加一些日志记录功能，记录玩家的操作和游戏的状态，方便调试和优化
 void setupExceptionHandler() {
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
     _set_abort_behavior(0, _WRITE_ABORT_MSG);
@@ -406,6 +541,20 @@ struct Factory {
     
 };
 
+
+struct ShopOffer {
+    string name;
+    long long price;
+    int stock;
+	string itemCategory;   // ore, ingot, chemical, fuel, part, etc.
+	string description;
+};
+
+struct SHOP {
+	vector<ShopOffer> items;
+	//这里可能会有一些特殊的商店，比如黑市、科技商店等等，后续版本可能会增加一些特殊的商店，提供一些独特的物品和服务
+};
+
 struct ChemicalKnowledge {
     string formula;
     bool discovered;
@@ -427,8 +576,132 @@ struct Planet {
     long long extractedAmount;
 };
 
+PlayerData player;
+Factory factory;
+//物品操作
+void addItem(const string& itemName, long long quantity, const string& category = "misc", double value = 0) {
+    for (auto& item : player.inventory) {
+        if (item.name == itemName) {
+            item.quantity += quantity;
+            return;
+        }
+    }
+    player.inventory.push_back({ itemName, quantity, category, value });
+}
 
-//===========教程
+bool hasItem(const string& itemName, long long quantity = 1) {
+    for (auto& item : player.inventory) {
+        if (item.name == itemName && item.quantity >= quantity) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int getItemCount(const string& itemName) {
+    for (auto& item : player.inventory) {
+        if (item.name == itemName) {
+            return item.quantity;
+        }
+    }
+    return false;
+}
+
+int removeItem(const string& itemName, long long quantity) {
+    for (auto& item : player.inventory) {
+        if (item.name == itemName) {
+            if (item.quantity >= quantity) {
+                item.quantity -= quantity;
+                typewriter("消耗了 " + itemName + " x " + to_string(quantity));
+                return quantity;
+            }
+            else {
+                int removed = item.quantity;
+                item.quantity = 0;
+                typewriter("注意! " + item.name + "的数量不足!\n" + "需要: " + to_string(quantity) + " 实际: " + to_string(removed), 40);
+                return removed;
+            }
+        }
+    }
+    typewriter("注意! " + itemName + "不存在", 40);
+    return false;
+}
+
+//硬币、金条操作
+void addCoins(long long amount) {
+    player.coins += amount;
+    typewriter("进账" + to_string(amount) + "个" + "硬币", 40);
+}
+
+bool removeCoins(long long amount) {
+    if (player.coins >= amount) {
+        player.coins -= amount;
+        typewriter("支出" + to_string(amount) + "个" + "硬币", 40);
+        return true;
+
+    }
+    else {
+        typewriter("注意! 你的硬币不足!\n需要: " + to_string(amount) + " 实际: " + to_string(player.coins), 40);
+        return false;
+    }
+}
+
+void addGoldBars(long long amount) {
+    player.goldBars += amount;
+    typewriter("进账" + to_string(amount) + "个" + "金条", 40);
+}
+
+bool removeGoldBars(long long amount) {
+    if (player.goldBars >= amount) {
+        player.goldBars -= amount;
+        typewriter("支出" + to_string(amount) + "个" + "金条", 40);
+        return true;
+    }
+    else {
+        typewriter("注意! 你的金条不足!\n需要: " + to_string(amount) + " 实际: " + to_string(player.goldBars), 40);
+        return false;
+    }
+}
+
+//经验操作
+void addExp(long long amount) {
+    player.exp += amount;
+    typewriter("获得了 " + to_string(amount) + " 点经验", 40);
+    //升级系统，n级别所需经验= 100 * n+当前等级*20
+    long long requiredExp = 100 * player.level + player.level * 20;
+    if (player.exp >= requiredExp) {
+        player.level++;
+        player.exp -= requiredExp;
+        typewriter("恭喜你升级了！当前等级: " + to_string(player.level), 40);
+    }
+}
+
+//对机器的操作，添加机器到工厂里，要写的东西稍微会多一点
+void addMachine(const string& name, const string& type, int x = 0, int y = 0) {
+    Machine newMachine;
+    newMachine.id = name;
+    newMachine.type = type;
+    newMachine.level = 1;
+    newMachine.isRunning = false;
+    newMachine.x = x;
+    newMachine.y = y;
+    newMachine.powerConsumption = 100 * newMachine.level; // 简单的功率消耗计算
+    factory.machines.push_back(newMachine);
+    typewriter("wow!添加了 " + type + " 到工厂！", 40);
+}
+
+
+//===========教程===========
+
+enum TutorialEvent {
+    OPEN_SHOP,
+    BUY_MACHINE,
+    CONNECT_POWER,
+    USE_MACHINE,
+    COMPLETE_QUEST,
+    UNLOCK_PLANET //这个我瞎写的，没啥用
+};
+
 struct TutorialStep {
     string id;
     string title;
@@ -458,129 +731,11 @@ private:
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
         cout << "\n [按任意键继续]";
         cin.get();
+		cin.get(); //防止屑残留,太屑了
     }
 public:
-	PlayerData player;
-	Factory factory;
-    //物品操作
-    void addItem(const string& itemName, long long quantity, const string& category = "misc", double value = 0) {
-        for (auto& item : player.inventory) {
-            if (item.name == itemName) {
-                item.quantity += quantity;
-                return;
-            }
-        }
-        player.inventory.push_back({ itemName, quantity, category, value });
-    }
-
-    bool hasItem(const string& itemName, long long quantity = 1) {
-        for (auto& item : player.inventory) {
-            if (item.name == itemName && item.quantity >= quantity) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    int getItemCount(const string& itemName) {
-        for (auto& item : player.inventory) {
-            if (item.name == itemName) {
-                return item.quantity;
-            }
-        }
-        return false;
-    }
-
-    int removeItem(const string& itemName, long long quantity) {
-        for (auto& item : player.inventory) {
-            if (item.name == itemName) {
-                if (item.quantity >= quantity) {
-                    item.quantity -= quantity;
-                    typewriter("消耗了 " + itemName + " x " + to_string(quantity));
-                    return quantity;
-                }
-                else {
-                    int removed = item.quantity;
-                    item.quantity = 0;
-                    typewriter("注意! " + item.name + "的数量不足!\n" + "需要: " + to_string(quantity) + " 实际: " + to_string(removed), 40);
-                    return removed;
-                }
-            }
-        }
-        typewriter("注意! " + itemName + "不存在", 40);
-        return false;
-    }
-
-    int getItemCount(const string& itemName) {
-        for (auto& item : player.inventory) {
-            if (item.name == itemName) {
-                return item.quantity;
-            }
-        }
-        return false;
-    }
-    //硬币、金条操作
-    void addCoins(long long amount) {
-        player.coins += amount;
-        typewriter("进账" + to_string(amount) + "个" + "硬币", 40);
-    }
-
-    bool removeCoins(long long amount) {
-        if (player.coins >= amount) {
-            player.coins -= amount;
-            typewriter("支出" + to_string(amount) + "个" + "硬币", 40);
-            return true;
-
-        }
-        else {
-            typewriter("注意! 你的硬币不足!\n需要: " + to_string(amount) + " 实际: " + to_string(player.coins), 40);
-            return false;
-        }
-    }
-
-    void addGoldBars(long long amount) {
-        player.goldBars += amount;
-        typewriter("进账" + to_string(amount) + "个" + "金条", 40);
-    }
-
-    bool removeGoldBars(long long amount) {
-        if (player.goldBars >= amount) {
-            player.goldBars -= amount;
-            typewriter("支出" + to_string(amount) + "个" + "金条", 40);
-            return true;
-        }
-        else {
-            typewriter("注意! 你的金条不足!\n需要: " + to_string(amount) + " 实际: " + to_string(player.goldBars), 40);
-            return false;
-        }
-    }
-
-    //经验操作
-    void addExp(long long amount) {
-        player.exp += amount;
-        typewriter("获得了 " + to_string(amount) + " 点经验", 40);
-        //升级系统，n级别所需经验= 100 * n+当前等级*20
-        long long requiredExp = 100 * player.level + player.level * 20;
-        if (player.exp >= requiredExp) {
-            player.level++;
-            player.exp -= requiredExp;
-            typewriter("恭喜你升级了！当前等级: " + to_string(player.level), 40);
-        }
-    }
-
-    //对机器的操作，添加机器到工厂里，要写的东西稍微会多一点
-    void addMachine(const string& name, const string& type, int x = 0, int y = 0) {
-        Machine newMachine;
-        newMachine.id = name;
-        newMachine.type = type;
-        newMachine.level = 1;
-        newMachine.isRunning = false;
-        newMachine.x = x;
-        newMachine.y = y;
-        newMachine.powerConsumption = 100 * newMachine.level; // 简单的功率消耗计算
-        factory.machines.push_back(newMachine);
-        typewriter("wow!添加了 " + type + " 到工厂！", 40);
-    }
+    PlayerData player;
+    Factory factory;
 
     //这里要加入一个拆除机器，拆除机器会返还一部分资源，返还的资源数量取决于机器的等级和类型，尤其是珍贵的硬币，LOL
     //但是我们先放着，等后续版本再说吧
@@ -627,7 +782,7 @@ public:
 		typewriter("别走！你还需呀一些工具来提高生产效率！这个工具包里有一些铁锹、扳手、螺丝刀、化学单元、玻璃瓶和烧杯，可以帮助你更高效地生产和提取化学物质！", 40);
     }
 
-    //新手快被物品塞满了！不够！给点化学品吧
+    //新手快被物品塞满了！但这还不够！给点化学品吧
 	//包含:硫酸，盐酸，硝酸，氟，氯，甲烷
     void giveChemistryPack() {
 		addItem("sulfuric acid", 10, "chemical", 20);
@@ -660,7 +815,7 @@ public:
         }
     }
     
-    //这里突然想起来一个事情，话说是不是要加一个显示库存，必须帅一点，UI必须好看一点，666666666666666
+    //这里突然想起来一个事情，是不是要加一个显示库存，必须帅一点，UI必须好看一点，666666666666666
 	//感觉可以加入一个ASCII艺术的库存界面，显示玩家的物品和数量，甚至可以根据物品的类别用不同的颜色显示，增加一些视觉效果
     void displayInventory() {
         system("cls");
@@ -699,7 +854,7 @@ public:
         };
 
     }
-
+	//检查事件触发，判断是否满足条件，完成步骤，给予奖励，增加一些成就感
     void checkEvent(const string& event, const string& itemName, PlayerData& player, Factory& factory) {
         if (!tutorialActive) return;
         for (auto& step : steps) {
@@ -715,6 +870,7 @@ public:
             }
         }
     }
+    
     //根据步骤ID给予奖励，奖励可以是经验、金币、物品等
     void giveReward(const string& stepId, PlayerData& player) {
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
@@ -742,11 +898,13 @@ public:
 
         delay(2000);
     }
-
+	//检查步骤是否完成
     bool isStepCompleted(const string& stepId) {
-        return completedFlags[stepId];
+		auto it = completedFlags.find(stepId);
+		return it != completedFlags.end() && it->second;
     }
 
+	//跳过教程，直接完成所有步骤，给予所有奖励
     void skipTutorial() {
         tutorialActive = false;
         for (auto& step : steps) {
@@ -757,16 +915,20 @@ public:
         cout << "看来你很有自信！\n";
         delay(2000);
     }
-    //教程启动!
-    //这里写一个教程的启动
-    void startTutorial() {
-        //留空，到时候写，咕咕咕
-    }
+    
+    bool isActive() {
+        return tutorialActive;
+	}
+
 };
 
 
-// ======================== 存档管理器 ========================
 
+vector<ShopOffer> shopItems;
+
+// ======================== 存档管理器 ========================
+//💾没有存档的游戏不是好游戏
+//存档管理器负责保存和加载游戏数据，管理玩家的进度和状态，以及提供一些与存档相关的功能
 class SaveManager {
 private:
     TutorialManager tutorial;
@@ -778,7 +940,7 @@ private:
     vector<ChemicalKnowledge> chemistry;
     vector<Quest> quests;
     vector<Planet> planets;
-
+    
     // 辅助函数：创建存档目录
     void ensureSaveDirectory() {
         if (!fs::exists(saveDirectory)) {
@@ -870,7 +1032,7 @@ public:
         quests = {
             {1, "First_sale", 0, false},
             {2, "ores go GRRR", 0, false},
-            {3, "electrolysis_salt", 0, false}
+            {3, "a hundred bucks", 0, false}
         };
 
         // 初始化星球
@@ -895,18 +1057,23 @@ public:
             tutorial.skipTutorial();
         }
         else {
-			tutorial.startTutorial();
+			typewriter("好的！让我们开始新手教程吧！", 40);
+            typewriter("教程会一步步引导你了解游戏的基本操作和机制。", 40);
         }
 
     }
 
 	void triggerEvent(const string& event, const string& itemName = "") {
-        tutorial.checkEvent(event, itemName, player, factory);
+        if (tutorial.isActive()) {
+			tutorial.checkEvent(event, itemName, player, factory);
+        }
     }
 
     TutorialManager& getTutorial() {
         return tutorial;
 	}
+
+    
 
     // 保存游戏
     bool saveGame(const string& slotName) {
@@ -968,6 +1135,16 @@ public:
             chemJson["discovered"] = chem.discovered;
             chemJson["discoveryTime"] = chem.discoveryTime;
             saveData["chemistry"].push_back(chemJson);
+        }
+
+		// === 商店数据 ===
+		for (const auto& item : shopItems) {
+            json itemJson;
+            itemJson["name"] = item.name;
+            itemJson["itemCategory"] = item.itemCategory;
+            itemJson["price"] = item.price;
+            itemJson["stock"] = item.stock;
+            saveData["shopItems"].push_back(itemJson);
         }
 
         // === 任务系统 ===
@@ -1180,7 +1357,7 @@ public:
         cout << "═════════════════════════════════════\n";
         cout << "金条是一种高级货币!事实上，你可以制作它们！";
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-        delay(4000);
+        delay(2000);
         cls();
     }
 
@@ -1279,6 +1456,227 @@ public:
 	}
 
 };
+
+//物品分析系统
+class ItemAnalyzer {
+public:
+    //物品多如牛毛，这里需要加一个tags识别器，方便后续的管理（tags有富集、贫瘠、不稳定、易燃、腐蚀性等）
+	//需要先打个非常大的标签库，后续可以根据需要添加更多的标签，这样就可以更好地管理和分类物品了
+    //希望兄弟有兴趣能帮我写一下，因为这里我不是很擅长，磕一个，orz
+    //预留区域
+};
+
+
+//商店系统
+enum category {
+    machine,
+    chemical,
+    tool,
+    pack
+};
+struct ShopItem {
+    string name;
+    string description;
+    int price;
+    category itemCategory; // 例如 "machine", "chemical", "tool" 等
+};
+
+struct SpecialOffer {
+    ShopOffer offer;
+    time_t startTime;
+    time_t endTime;
+};
+
+//礼包，玩家可以购买，礼包里有一些物品
+struct Packs{
+    string name;
+    string description;
+    long long price;
+	vector<ShopItem> contents; // 礼包内容
+};
+
+
+class Shop {
+private:
+	SaveManager saveManager;
+    PlayerData player;
+    //展示系统商店
+    void showShop() {
+        cls();
+        CoolAnimation::rainbowText( R"(          _____                    _____                   _______                   _____          
+         /\    \                  /\    \                 /::\    \                 /\    \         
+        /::\    \                /::\____\               /::::\    \               /::\    \        
+       /::::\    \              /:::/    /              /::::::\    \             /::::\    \       
+      /::::::\    \            /:::/    /              /::::::::\    \           /::::::\    \      
+     /:::/\:::\    \          /:::/    /              /:::/~~\:::\    \         /:::/\:::\    \     
+    /:::/__\:::\    \        /:::/____/              /:::/    \:::\    \       /:::/__\:::\    \    
+    \:::\   \:::\    \      /::::\    \             /:::/    / \:::\    \     /::::\   \:::\    \   
+  ___\:::\   \:::\    \    /::::::\    \   _____   /:::/____/   \:::\____\   /::::::\   \:::\    \  
+ /\   \:::\   \:::\____\/:::/  \:::\    /::\____\|:::|    |     |:::|    | /:::/\:::\   \:::\____\ 
+/::\   \:::\   \:::\    \  /:::/  \:::\    /:::/    / \:::\    \   /:::/    / \::/    \:::\  /:::|    |
+\:::\   \:::\   \::/    /\::/    \:::\  /:::/    /   \:::\    /:::/    /   \/_____/\:::\/:::/    / 
+ \:::\   \:::\   \/____/  \/____/ \:::\/:::/    /     \:::\    /:::/    /             \::::::/    /  
+   \:::\   \:::\____\               \::::/    /       \:::\__/:::/    /               \::::/    /   
+    \:::\  /:::/    /               /:::/    /         \::::::::/    /                 \::/____/    
+     \:::\/:::/    /               /:::/    /           \::::::/    /                                
+      \::::::/    /               /:::/    /             \::::/    /                   ~~          
+       \::::/    /               /:::/    /               \::/____/                                 
+        \::/    /                \::/    /                 ~~                                       
+         \/____/                  \/____/                )");
+        cout << "\n\n\n";
+		setcolor(CYAN);
+        cout << "欢迎来到系统商店，当前时间:";
+		time_t now = time(nullptr);
+		cout << gettimeString(now) << endl;
+        cout<<"这里有许多有趣的物品，快来看看吧！\n";
+		setcolor(RESET);
+	}
+
+    //一个灵活的函数，添加商品,并自动把物品分类展示
+    void addTh(category itemC, const string& name, const string& description, long long price) {
+		ShopOffer newItem;
+        newItem.name = name;
+		newItem.description = description;
+        newItem.price = price;
+		newItem.itemCategory = itemC;
+		shopItems.push_back(newItem);
+		//分类展示
+		cout <<"分类: ";
+		cout << (itemC == machine ? "机器" : itemC == chemical ? "化学品" : "工具") << " | ";
+		cout << "名称: " << name << " | ";
+		cout << "价格: " << price << " coins\n";
+		cout << "描述: " << description << "\n\n";
+		cout << "如果你想购买，输入 /buy <name> <amount>，示例:/buy bread 11 \n";
+    }
+
+    //随机生成特别商品,使用随机数抽取，这里先预设一些
+    string getRandomItem() {
+		//大型工业电解机，不锈钢板，大型化学反应釜，极富集闪锌矿，贫瘠钻石矿，高十六烷值汽油,等等
+        vector<string> items = {"large industrial electrolyzer","stainless steel plate","large chemical reactor","extra rich zinc ore","barren diamond ore","high octane gasoline"};
+        int index = rand() % items.size();
+        return items[index];
+	}
+    //使用randint()
+    
+
+    void generateSpecialOffers() {
+		int numOffers = 5; // 每次生成5个特别商品
+		for (int i = 0; i < numOffers; i++) {
+            category itemC = static_cast<category>(rand() % 3); // 随机分类
+            string itemName = getRandomItem(); // 随机商品名称
+            string description = "这是一个特别商品"; // 简单描述
+            long long price = (rand() % 400) + 100; // 随机价格在100-499之间
+            addTh(itemC, itemName, description, price);
+        }
+    }
+
+    //包含特定物品的礼包
+    // 快速发展礼包
+    //包含:富集粗黄铁矿，富集粗闪锌矿，镓锭，富集粗磁铁矿，贫瘠钻石矿，工业酒精，水，锡粉,氢氧化钠，粗硫粉，生橡胶末，高密度聚乙烯板，甲烷,复合耐热合金板
+    
+    void BuyQuickStartPack() {
+		addItem("enriched raw pyrite", 150, "ore", 10);
+		addItem("enriched raw zinc ore", 50, "ore", 10);
+		addItem("gallium ingot", 20, "chemical", 20);
+		addItem("enriched raw magnetite", 50, "ore", 10);
+		addItem("barren diamond ore", 3, "ore", 800);
+		addItem("industrial alcohol", 100, "chemical", 5);
+		addItem("water", 2000, "chemical", 100);
+		addItem("tin powder", 10, "chemical", 8);
+		addItem("sodium hydroxide", 10, "chemical", 15);
+		addItem("raw sulfur powder", 10, "chemical", 20);
+		addItem("raw rubber powder", 10, "chemical", 20);
+		addItem("high density polyethylene sheet", 5, "tool", 25);
+		addItem("methane", 10, "chemical", 5);
+		addItem("composite heat resistant alloy sheet", 5, "tool", 800);
+        addCoins(-2000);
+        CoolAnimation::rainbowText("你购买了初级发育礼包！里面有一些水、矿石、燃料、材料、工具，价格实惠!(2000 coins)可以帮助你快速发展！加油！", 40);
+    }
+
+    //高分子-塑料礼包
+	//聚苯并咪唑板，聚醚醚酮板，聚四氟乙烯板，聚乙烯板，聚丙烯板，聚氨酯板，聚甲醛板，聚碳酸酯板，聚酰胺板，聚甲基丙烯酸甲酯板,等等
+    void BuyPolymerPack() {
+		addItem("polybenzimidazole sheet", 25, "tool", 300);
+		addItem("polyether ether ketone sheet", 25, "tool", 300);
+        addItem("polytetrafluoroethylene sheet", 25, "tool", 450);
+		addItem("polyethylene sheet", 25, "tool", 250);
+		addItem("polypropylene sheet", 25, "tool", 250);
+		addItem("polyurethane sheet", 25, "tool", 250);
+		addItem("polyoxymethylene sheet", 25, "tool", 250);
+		addItem("polycarbonate sheet", 25, "tool", 250);
+		addItem("polyamide sheet", 25, "tool", 250);
+		addItem("polymethyl methacrylate sheet", 25, "tool", 300);
+		CoolAnimation::rainbowText("你购买了高分子-塑料礼包！里面有各种各样的塑料板材，可以用来制作机器的外壳或者其他工具！(3000 coins)", 40);
+		CoolAnimation::rainbowText("你是个塑料和高分子的狂热爱好者", 40);
+		addCoins(-3000);
+    }
+
+	//能源礼包
+	//高十六烷值汽油，高辛烷值汽油，高纯度液化天然气，液氨，氢气，生物柴油，极重油,轻燃油，石脑油，芳烃混合燃油
+    void BuyEnergyPack() {
+		addItem("high octane gasoline", 100, "fuel", 100);
+		addItem("high cetane diesel", 100, "fuel", 100);
+        addItem("high purity liquefied natural gas", 100, "fuel", 150);
+		addItem("liquid ammonia", 100, "fuel", 150);
+		addItem("hydrogen", 2000, "fuel", 200);
+		addItem("biodiesel", 100, "fuel", 150);
+		addItem("extra heavy oil", 100, "fuel", 150);
+		addItem("light fuel oil", 100, "fuel", 150);
+        addItem("naphtha", 100, "fuel", 150);
+		addItem("aromatic mixed fuel", 100, "fuel", 150);
+		addCoins(-1500);
+        CoolAnimation::rainbowText("你购买了能源礼包！里面有各种各样的燃料，可以用来驱动你的机器和设备！(1500 coins)", 40);
+        CoolAnimation::rainbowText("让你的发电机轰鸣吧！呜呜呜~", 40);
+    }
+
+    //元素礼包
+	//含有大量的元素！不包括那些特别昂贵的，人造的
+    void BuyElementPack() {
+		addItem("hydrogen", 1000, "chemical", 5);//氢，宇宙中最丰富的元素
+		addItem("helium", 1000, "chemical", 10);//氦,很简单的东西
+		addItem("lithium", 100, "chemical", 20);//锂，电池的核心元素
+		addItem("beryllium", 100, "chemical", 20);//铍，你可能不熟悉
+		addItem("boron", 100, "chemical", 20);//硼，死谷
+		addItem("carbon", 4000, "chemical", 50);//碳，你就是这个
+		addItem("nitrogen", 1000, "chemical", 10);//氮，你需要这个
+		addItem("oxygen", 8000, "chemical", 80);//氧,你需要这个
+		addItem("fluorine", 100, "chemical", 100);//氟
+		addItem("neon", 5, "chemical", 50);//氖，虽然很贵，但也不算特别昂贵的元素
+		addItem("sodium", 500, "chemical", 10);//钠，这个不能直接吃！
+		addItem("magnesium", 100, "chemical", 20);//镁，一听名字就很美
+		addItem("aluminum", 400, "chemical", 200);//地壳中含量第三的元素,和氧是真爱
+		addItem("silicon", 100, "chemical", 200); //硅谷,加利福利亚!🍎
+		addItem("phosphorus", 100, "chemical", 20);//磷，肥料的核心元素
+
+		addCoins(-1000);
+    }
+    void addPacks() {
+        //预设一些礼包，后续可以根据玩家的需求和游戏的进展来调整礼包内容
+        
+    }
+
+    //存储商店信息
+    void saveShopData() {
+        json shopData;
+        for (const auto& item : shopItems) {
+            json itemJson;
+            itemJson["name"] = item.name;
+            itemJson["description"] = item.description;
+            itemJson["price"] = item.price;
+            itemJson["itemCategory"] = item.itemCategory;
+            shopData["shopItems"].push_back(itemJson);
+        }
+        ofstream file("shop_data.json");
+        if (file.is_open()) {
+            file << shopData.dump(4);
+            file.close();
+        }
+	}
+
+    //爽炸了
+};
+
+
 
 // ======================== 主菜单 ========================
 
@@ -1436,7 +1834,7 @@ int main()
         return 1;
     }
 	//撒花，游戏成功运行了！虽然现在内容还很少，但这是一个好的开始！后续版本会逐渐添加更多的内容和功能，敬请期待！谢谢大家的支持！
-    //(ﾉ*･ω･)ﾉ
+    //(ﾉ*･ω･)ﾉ (花x114514)
     //(👉ﾟヮﾟ)👉👈(ﾟヮﾟ👈)
     //放个apple别偷吃
 	//  ,--./,-.
