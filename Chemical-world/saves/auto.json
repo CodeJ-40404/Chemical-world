@@ -1,0 +1,80 @@
+{
+    "chemistry": [
+        {
+            "discovered": true,
+            "discoveryTime": 1777362039,
+            "formula": "H2O"
+        }
+    ],
+    "factory": {
+        "name": "CODEJ's Factory",
+        "totalPower": 0,
+        "usedPower": 0
+    },
+    "inventory": [
+        {
+            "category": "chemical",
+            "name": "water",
+            "quantity": 10,
+            "value": 5.0
+        },
+        {
+            "category": "ore",
+            "name": "raw rich pyrite",
+            "quantity": 5,
+            "value": 10.0
+        },
+        {
+            "category": "fuel",
+            "name": "raw coal",
+            "quantity": 3,
+            "value": 15.0
+        }
+    ],
+    "metadata": {
+        "saveTime": 1777362039,
+        "version": "1.0"
+    },
+    "planets": [
+        {
+            "extractedAmount": 0,
+            "miningRigs": 0,
+            "name": "Earth",
+            "resources": [
+                "pyrite",
+                "coal",
+                "oil"
+            ],
+            "unlocked": true
+        }
+    ],
+    "player": {
+        "coins": 100,
+        "createdAt": 1777362039,
+        "exp": 0,
+        "goldBars": 0,
+        "lastPlayed": 1777362039,
+        "level": 1,
+        "name": "CODEJ"
+    },
+    "quests": [
+        {
+            "completed": false,
+            "id": 1,
+            "name": "First_sale",
+            "progress": 0
+        },
+        {
+            "completed": false,
+            "id": 2,
+            "name": "ores go GRRR",
+            "progress": 0
+        },
+        {
+            "completed": false,
+            "id": 3,
+            "name": "electrolysis_salt",
+            "progress": 0
+        }
+    ]
+}
